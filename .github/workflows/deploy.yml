@@ -1,0 +1,56 @@
+name: Build & Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'YoRsk_blog/**'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    env:
+      # 由仓库 secret 注入；未配置时跳过部署步骤（不报错）
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.165.0'
+          extended: true
+
+      - name: Build site
+        working-directory: YoRsk_blog
+        run: hugo -d ../build_output
+
+      - name: Keep Pages repo essentials
+        run: |
+          mkdir -p build_output/.github/workflows
+          cp .github/pages/static.yml build_output/.github/workflows/static.yml
+          cp .github/pages/gitattributes build_output/.gitattributes
+
+      - name: Deploy to YoRsk/YoRsk.github.io
+        if: ${{ env.DEPLOY_TOKEN != '' }}
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.DEPLOY_TOKEN }}
+          external_repository: YoRsk/YoRsk.github.io
+          publish_branch: main
+          publish_dir: build_output
+          commit_message: 'Deploy from YoRsk_blog@${{ github.sha }}'
+
+      - name: Warn if token missing
+        if: ${{ env.DEPLOY_TOKEN == '' }}
+        run: |
+          echo "::warning::DEPLOY_TOKEN secret 未配置，本次仅构建未部署。请在仓库 Settings → Secrets and variables → Actions 添加 DEPLOY_TOKEN 后重新运行。"

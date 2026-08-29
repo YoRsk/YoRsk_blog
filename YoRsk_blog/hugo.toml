@@ -2,9 +2,20 @@ baseURL = "https://yorsk.github.io/"
 languageCode = "en-us"
 title = "The Simple"
 theme = "hugo-PaperMod"
+mainSections = ["posts"]
 
 [params]
   defaultTheme = "auto"
   ShowReadingTime = true
   ShowShareButtons = false
   ShowPostNavLinks = true
+
+[[menus.main]]
+  name = "笔记"
+  pageRef = "/notes/"
+  weight = 10
+
+[[menus.main]]
+  name = "管理"
+  url = "/admin/"
+  weight = 20

@@ -1,0 +1,52 @@
+backend:
+  name: github
+  repo: YoRsk/YoRsk_blog
+  branch: main
+
+site_url: https://yorsk.github.io/
+logo_url: https://yorsk.github.io/favicon.ico
+
+# 全局图库（文章/笔记之外散图存放处）
+media_folder: YoRsk_blog/static/images/uploads
+public_folder: /images/uploads
+
+collections:
+  # ============ 博客文章 ============
+  - name: posts
+    label: 文章
+    label_singular: 文章
+    folder: YoRsk_blog/content/posts
+    path: "{{slug}}/index"
+    create: true
+    slug: "{{slug}}"
+    sortable_fields: [date, title]
+    media_folder: ""
+    public_folder: ""
+    summary: "{{title}} — {{year}}-{{month}}-{{day}}"
+    fields:
+      - { label: 标题, name: title, widget: string }
+      - { label: 发布日期, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: HH:mm, format: "YYYY-MM-DDTHH:mm:ssZ" }
+      - { label: 草稿, name: draft, widget: boolean, default: false, required: false }
+      - { label: 摘要, name: summary, widget: text, required: false }
+      - { label: 标签, name: tags, widget: list, required: false }
+      - { label: 显示目录, name: showToc, widget: boolean, default: false, required: false }
+      - { label: 正文, name: body, widget: markdown }
+
+  # ============ 笔记区 ============
+  - name: notes
+    label: 笔记
+    label_singular: 笔记
+    folder: YoRsk_blog/content/notes
+    path: "{{slug}}/index"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    sortable_fields: [date, title]
+    media_folder: ""
+    public_folder: ""
+    summary: "{{title}} — {{year}}-{{month}}-{{day}}"
+    fields:
+      - { label: 标题, name: title, widget: string }
+      - { label: 日期, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: HH:mm, format: "YYYY-MM-DDTHH:mm:ssZ" }
+      - { label: 草稿, name: draft, widget: boolean, default: false, required: false }
+      - { label: 标签, name: tags, widget: list, required: false }
+      - { label: 正文, name: body, widget: markdown }
