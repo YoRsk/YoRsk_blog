@@ -16,6 +16,8 @@ content/posts/how-to-add-screenshots/
 ```
 
 引用时直接写文件名：
+![1](ScreenShot_2026-08-29_142636_084.png)
+
 
 ```markdown
 ![终端截图](terminal-demo.png)
