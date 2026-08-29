@@ -6,3 +6,7 @@ build_output/
 
 # 生成示例图用的临时脚本
 gen_demo_images.py
+
+# 编辑器/系统文件
+.DS_Store
+Thumbs.db
