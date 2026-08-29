@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'YoRsk_blog/**'
+      - '.github/workflows/deploy.yml'
+      - '.github/pages/**'
   workflow_dispatch:
 
 concurrency:
