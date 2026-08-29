@@ -1,0 +1,7 @@
+[submodule "YoRsk_blog/public"]
+	path = YoRsk_blog/public
+	url = https://github.com/YoRsk/YoRsk.github.io.git
+	branch = main
+[submodule "YoRsk_blog/themes/hugo-PaperMod"]
+	path = YoRsk_blog/themes/hugo-PaperMod
+	url = https://github.com/adityatelange/hugo-PaperMod.git

@@ -1,0 +1,6 @@
+# Hugo 构建产物与临时文件
+YoRsk_blog/.hugo_build.lock
+YoRsk_blog/resources/_gen/
+
+# 生成示例图用的临时脚本
+gen_demo_images.py
