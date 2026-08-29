@@ -14,6 +14,8 @@ concurrency:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       # 由仓库 secret 注入；未配置时跳过部署步骤（不报错）
       DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
@@ -39,6 +41,23 @@ jobs:
           mkdir -p build_output/.github/workflows
           cp .github/pages/static.yml build_output/.github/workflows/static.yml
           cp .github/pages/gitattributes build_output/.gitattributes
+
+      # 自检：只输出 Token 长度 / HTTP 状态码 / git 认证结果，不打印 Token 内容
+      - name: Preflight - verify DEPLOY_TOKEN
+        if: ${{ env.DEPLOY_TOKEN != '' }}
+        env:
+          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          echo "token length (chars): $(printf '%s' "$TOKEN" | wc -c)"
+          echo -n "api check YoRsk_blog       -> "
+          curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $TOKEN" https://api.github.com/repos/YoRsk/YoRsk_blog
+          echo -n "api check YoRsk.github.io  -> "
+          curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $TOKEN" https://api.github.com/repos/YoRsk/YoRsk.github.io
+          if git ls-remote --exit-code "https://x-access-token:${TOKEN}@github.com/YoRsk/YoRsk.github.io.git" HEAD > /dev/null 2>&1; then
+            echo "git auth over HTTPS -> OK"
+          else
+            echo "git auth over HTTPS -> FAILED (Token 无效、过期、含换行/空格，或未授权该仓库)"
+          fi
 
       - name: Deploy to YoRsk/YoRsk.github.io
         if: ${{ env.DEPLOY_TOKEN != '' }}
