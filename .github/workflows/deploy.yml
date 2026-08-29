@@ -44,22 +44,37 @@ jobs:
           cp .github/pages/static.yml build_output/.github/workflows/static.yml
           cp .github/pages/gitattributes build_output/.gitattributes
 
-      # 自检：只输出 Token 长度 / HTTP 状态码 / git 认证结果，不打印 Token 内容
-      - name: Preflight - verify DEPLOY_TOKEN
+      # 自检 A：Token 是否有效 + 能否 git 读取 Pages 仓库（失败则退出码 1，便于定位）
+      # 只输出 Token 长度与状态码，不打印 Token 内容
+      - name: "Preflight A: token + read access"
         if: ${{ env.DEPLOY_TOKEN != '' }}
         env:
           TOKEN: ${{ secrets.DEPLOY_TOKEN }}
         run: |
           echo "token length (chars): $(printf '%s' "$TOKEN" | wc -c)"
-          echo -n "api check YoRsk_blog       -> "
+          echo -n "api YoRsk_blog      -> "
           curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $TOKEN" https://api.github.com/repos/YoRsk/YoRsk_blog
-          echo -n "api check YoRsk.github.io  -> "
+          echo -n "api YoRsk.github.io -> "
           curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $TOKEN" https://api.github.com/repos/YoRsk/YoRsk.github.io
           if git ls-remote --exit-code "https://x-access-token:${TOKEN}@github.com/YoRsk/YoRsk.github.io.git" HEAD > /dev/null 2>&1; then
-            echo "git auth over HTTPS -> OK"
+            echo "git read auth -> OK"
           else
-            echo "git auth over HTTPS -> FAILED (Token 无效、过期、含换行/空格，或未授权该仓库)"
+            echo "git read auth -> FAILED: token 无效/过期/含换行空格，或未授权该仓库"
+            exit 1
           fi
+
+      # 自检 B：Token 是否有 Contents 写权限（创建一个临时 blob，会被 GC，不影响任何文件）
+      - name: "Preflight B: write access"
+        if: ${{ env.DEPLOY_TOKEN != '' }}
+        env:
+          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/YoRsk/YoRsk.github.io/git/blobs \
+            -d '{"content":"preflight-write-probe","encoding":"utf-8"}')
+          echo "write probe -> HTTP $code (201=有写权限, 403/404=无写权限)"
+          [ "$code" = "201" ] || exit 1
 
       - name: Deploy to YoRsk/YoRsk.github.io
         if: ${{ env.DEPLOY_TOKEN != '' }}
