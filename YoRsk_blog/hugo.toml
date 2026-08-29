@@ -3,6 +3,7 @@ languageCode = "en-us"
 title = "The Simple"
 theme = "hugo-PaperMod"
 mainSections = ["posts"]
+# cloud-build: 由 GitHub Actions 自动构建部署
 
 [params]
   defaultTheme = "auto"
