@@ -1,5 +1,5 @@
 ---
-title: 如何在博客里插入截图（两种方法）
+title: SSO / OAuth2 / OIDC / JWT 技术笔记
 date: 2026-08-30T18:40:00+09:00
 draft: false
 summary: ''
@@ -9,9 +9,7 @@ tags:
 showToc: true
 ---
 
-# SSO / OAuth2 / OIDC / JWT 技术笔记
-
-## 1. 核心概念关系
+# 1. 核心概念关系
 
 | 概念 | 类型 | 解决什么问题 |
 | --- | --- | --- |
