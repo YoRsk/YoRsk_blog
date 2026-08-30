@@ -2,6 +2,8 @@
 title: 如何在博客里插入截图（两种方法）
 date: 2026-08-29T14:00:00+09:00
 draft: false
+summary: ''
+tags: []
 showToc: true
 ---
 
@@ -9,7 +11,7 @@ showToc: true
 
 图片和文章放在同一个文件夹里，文章文件名必须是 `index.md`：
 
-```
+```plain
 content/posts/how-to-add-screenshots/
 ├── index.md            ← 文章
 └── terminal-demo.png   ← 截图
@@ -23,21 +25,12 @@ content/posts/how-to-add-screenshots/
 
 效果如下：
 
-![终端截图](terminal-demo.png)
+![](20260830-174108.png)
+
 
 ![1](ScreenShot_2026-08-29_142636_084.png)
 
-## 方法二：static/images（全局图片）
-
-图片放进 `static/images/`，用绝对路径引用：
-
-```markdown
-![浏览器截图](/images/browser-demo.png)
-```
-
-效果如下：
-
-![浏览器截图](/images/browser-demo.png)
+## 
 
 ## Windows 截图小技巧
 
