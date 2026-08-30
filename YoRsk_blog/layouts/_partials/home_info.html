@@ -9,10 +9,10 @@
             {{- $img := resources.Get . }}
             {{- if $img }}
             <img draggable="false" src="{{ $img.Permalink }}" alt="{{ $title }}" title="{{ $title }}"
-                height="120" width="120" />
+                height="100" width="100" />
             {{- else }}
             <img draggable="false" src="{{ . | absURL }}" alt="{{ $title }}" title="{{ $title }}"
-                height="120" width="120" />
+                height="100" width="100" />
             {{- end }}
         </div>
         {{- end }}

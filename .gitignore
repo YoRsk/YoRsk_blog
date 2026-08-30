@@ -4,6 +4,7 @@ YoRsk_blog/resources/_gen/
 YoRsk_blog/public/
 build_output/
 build_verify_tmp/
+build_preview_tmp/
 
 # 生成示例图用的临时脚本
 gen_demo_images.py

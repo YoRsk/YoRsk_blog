@@ -1,86 +1,126 @@
 /* ==========================================================================
-   The Simple · 墨黑 × 暖橙 主题定制
+   The Simple · 青碧 × 冷灰 主题定制
    --------------------------------------------------------------------------
    通过 PaperMod 的 assets/css/extended/ 机制加载（排在主题样式之后），
-   不改动 themes/ 内任何文件。所有动效时长 0.2~0.3s，克制、精致。
+   不改动 themes/ 内任何文件。
+
+   设计原则：克制。
+     · 强调色只用于小面积点睛（链接、发丝线、悬停态），不做大面积色块与粗边框
+     · 质感来自留白、层级、1px 发丝描边、多层柔和阴影、字距与行高
+     · 所有中性灰统一带极淡青灰偏移，不用纯灰，也不再出现暖米灰
+     · 悬停反馈只做「轻微上浮 2px + 阴影加深 + 发丝描边变色」
+
    模块目录：
-     1. 配色变量重定义（纸感浅底 / 墨黑深底 + 暖橙强调）
-     2. 基础细节（选中、滚动条、平滑滚动、链接）
-     3. 顶部阅读进度条（scroll() 渐进增强）
-     4. 首页 hero 区（头像 / 渐变标题 / 签名 / 社交图标）
+     1. 配色变量（青碧强调 / 冷调中性色 / 发丝描边 / 多层柔和阴影）
+     2. 基础细节（容器底色、选择态、滚动条、平滑滚动、链接、元信息排版）
+     3. 顶部阅读进度条（2px，scroll() 渐进增强）
+     4. 首页 hero 区（头像 / 标题 / 签名 / 社交图标）
      5. 文章列表卡片化
      6. 代码块与复制按钮
-     7. 排版细节（标题分隔线、blockquote、标签、导航）
+     7. 排版细节（标题分隔线、blockquote、标签、导航、页脚）
+     8. 无障碍：prefers-reduced-motion 降级
+
+   对比度核算（WCAG AA，正文/链接均需 ≥ 4.5:1）
+     浅色 正文 #26322f / 底 #f8faf9 = 12.7:1  链接 #0f766e = 5.2:1  次要 #5b6b68 = 5.3:1
+     深色 正文 #d7e0dd / 底 #0d1211 = 14.0:1  链接 #5eead4 = 12.8:1  次要 #9aa8a5 = 7.7:1
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. 配色变量重定义
-   浅色：纸感浅底 + 墨色文字 + 暖橙强调
-   深色：墨黑底（非纯黑）+ 亮暖橙强调，正文亮度不低于 #d4d4d4
-   注：当前 PaperMod 版本未定义 --link-background-color / --entry-hover-border，
-   因此通过 --accent 系列变量 + 下文具体选择器实现同等效果。
+   1. 配色变量
+   浅色：冷调浅底 + 深墨绿文字 + 深青碧强调
+   深色：带青调的近黑底 + 冷灰文字（亮度 ≥ #d4d4d4）+ 浅青碧强调
    -------------------------------------------------------------------------- */
 :root {
-    /* 暖橙强调色（浅色模式下用更深的橙以保证对比度） */
-    --accent: #e8590c;
-    --accent-2: #f08c00;
-    --accent-tint: rgba(232, 89, 12, 0.10);
+    /* 青碧强调色：仅用于链接、发丝线、悬停态等小面积点睛 */
+    --accent: #0f766e;
+    --accent-2: #14b8a6;
+    --accent-tint: rgba(15, 118, 110, 0.08);
+    --accent-line: rgba(15, 118, 110, 0.28);
 
-    /* 纸感浅底 */
-    --theme: #faf9f6;
+    /* 冷调中性色：每一级灰都带极淡青灰偏移 */
+    --theme: #f8faf9;
     --entry: #ffffff;
-    --primary: #211f1c;
-    --secondary: #605c55;
-    --tertiary: #ddd8cf;
-    --content: #28251f;
-    --code-bg: #f3f1ec;
-    --code-block-bg: #191a1c;
-    --border: #e7e3da;
-    --radius: 10px;
-    --shadow-card: 0 6px 18px rgba(28, 25, 20, 0.08);
+    --primary: #12201e;
+    --secondary: #5b6b68;
+    --tertiary: #cfdad7;
+    --content: #26322f;
+    --code-bg: #e4ecea;
+    --code-block-bg: #0d1211;
+    --border: #e2ebe9;
+
+    /* 发丝级描边：1px、低透明度，替代粗彩色边框 */
+    --hairline: rgba(18, 32, 30, 0.08);
+    --hairline-strong: rgba(18, 32, 30, 0.16);
+
+    /* 多层柔和阴影：近距层定形 + 远距层托起，避免单层硬阴影 */
+    --shadow-card: 0 1px 2px rgba(13, 24, 22, 0.04), 0 8px 24px rgba(13, 24, 22, 0.06);
+    --shadow-card-hover: 0 2px 4px rgba(13, 24, 22, 0.05), 0 14px 32px rgba(13, 24, 22, 0.09);
+    --shadow-avatar: 0 1px 2px rgba(13, 24, 22, 0.06), 0 8px 22px rgba(13, 24, 22, 0.10);
+    --shadow-avatar-hover: 0 2px 4px rgba(13, 24, 22, 0.07), 0 14px 30px rgba(13, 24, 22, 0.14);
+
+    /* 选择态：柔和浅青底 + 深色文字，不用高饱和实色 */
+    --selection-bg: rgba(15, 118, 110, 0.10);
+
+    --radius: 12px;
 }
 
 :root[data-theme="dark"],
 .dark {
-    /* 深色模式下用更亮的橙，在墨黑底上保持醒目 */
-    --accent: #f08c00;
-    --accent-2: #ffa94d;
-    --accent-tint: rgba(240, 140, 0, 0.12);
+    --accent: #5eead4;
+    --accent-2: #2dd4bf;
+    --accent-tint: rgba(94, 234, 212, 0.10);
+    --accent-line: rgba(94, 234, 212, 0.34);
 
-    /* 墨黑底（#16~#1a 区间，非纯黑） */
-    --theme: #16171a;
-    --entry: #1e1f23;
-    --primary: #e6e4df;
-    --secondary: #a9a59e;
-    --tertiary: #34363b;
-    --content: #d8d6d1;
-    --code-bg: #222327;
-    --code-block-bg: #131416;
-    --border: #2b2d32;
-    --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.35);
+    --theme: #0d1211;
+    --entry: #141a19;
+    --primary: #e8efed;
+    --secondary: #9aa8a5;
+    --tertiary: #2e3735;
+    --content: #d7e0dd;
+    --code-bg: #1e2725;
+    --code-block-bg: #0a0e0e;
+    --border: #1f2725;
+
+    --hairline: rgba(232, 239, 237, 0.09);
+    --hairline-strong: rgba(232, 239, 237, 0.16);
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.30), 0 8px 24px rgba(0, 0, 0, 0.24);
+    --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.34), 0 14px 32px rgba(0, 0, 0, 0.32);
+    --shadow-avatar: 0 1px 2px rgba(0, 0, 0, 0.30), 0 10px 26px rgba(0, 0, 0, 0.34);
+    --shadow-avatar-hover: 0 2px 4px rgba(0, 0, 0, 0.36), 0 16px 34px rgba(0, 0, 0, 0.42);
+
+    --selection-bg: rgba(94, 234, 212, 0.18);
 }
 
 /* --------------------------------------------------------------------------
    2. 基础细节
    -------------------------------------------------------------------------- */
+
+/* PaperMod 原版把列表页容器底色绑在 --code-bg 上，与行内代码/标签底色共用，
+   导致三者无法各自成色。这里把容器底色解耦到 --theme，让 --code-bg
+   回归「行内代码 / 标签」语义，页面底色也因此干净统一。 */
+.list,
+[data-theme="dark"] .list {
+    background: var(--theme);
+}
+
 html {
     scroll-behavior: smooth;
     scrollbar-width: thin;
     scrollbar-color: var(--tertiary) transparent;
 }
 
-/* 暖橙选中 */
+body {
+    line-height: 1.75;
+}
+
+/* 选择态：柔和浅青底 + 深色文字 */
 ::selection {
-    background: var(--accent);
-    color: #ffffff;
+    background: var(--selection-bg);
+    color: var(--primary);
 }
 
-:root[data-theme="dark"] ::selection,
-.dark ::selection {
-    color: #17181a;
-}
-
-/* 滚动条美化：细、圆角、暖橙 thumb */
+/* 滚动条：细、圆角、冷灰 thumb，悬停时转青碧 */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -99,24 +139,48 @@ html {
     background: var(--accent);
 }
 
-/* 正文链接：暖橙 + 底部细线过渡动效 */
+/* 正文链接：青碧 + 发丝下划线；悬停仅加深下划线与极淡底色，
+   不切换成更亮的青（#14b8a6 在白底仅 2.4:1，不满足 AA）。 */
 .post-content a,
-.entry-content a {
+.entry-content a,
+.md-content a {
     color: var(--accent);
     text-decoration: none;
-    text-underline-offset: 0.2rem;
-    border-bottom: 1px solid var(--accent-tint);
-    transition: color 0.2s ease, border-color 0.2s ease;
+    border-bottom: 1px solid var(--accent-line);
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .post-content a:hover,
-.entry-content a:hover {
-    color: var(--accent-2);
-    border-bottom-color: var(--accent-2);
+.entry-content a:hover,
+.md-content a:hover {
+    border-bottom-color: var(--accent);
+    background: var(--accent-tint);
+}
+
+/* 元信息（日期 / 阅读时长 / 字数 / 标签行）：小字号 + 宽字距 + 低饱和 */
+.post-entry .entry-footer,
+.post-meta,
+.post-footer,
+.entry-meta {
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    color: var(--secondary);
+}
+
+/* 标题字距收紧，视觉更精致 */
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.md-content h1,
+.md-content h2,
+.md-content h3,
+.post-entry .entry-header h2,
+.first-entry .entry-header h1 {
+    letter-spacing: -0.015em;
 }
 
 /* --------------------------------------------------------------------------
-   3. 顶部阅读进度条（2~3px 暖橙，scroll() 驱动；不支持的浏览器自动隐藏）
+   3. 顶部阅读进度条（2px 青碧，scroll() 驱动；不支持的浏览器自动隐藏无残留）
    -------------------------------------------------------------------------- */
 body::before {
     content: "";
@@ -124,10 +188,10 @@ body::before {
     top: 0;
     left: 0;
     width: 100%;
-    height: 3px;
+    height: 2px;
     z-index: 100;
     pointer-events: none;
-    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+    background: var(--accent);
     transform: scaleX(0);
     transform-origin: 0 50%;
 }
@@ -153,8 +217,14 @@ body::before {
    4. 首页 hero 区（homeInfoParams 渲染区：.first-entry.home-info）
    -------------------------------------------------------------------------- */
 .first-entry.home-info {
-    min-height: 360px;
+    min-height: 320px;
     text-align: center;
+    padding: 48px 24px 40px;
+    margin-bottom: var(--gap);
+    background: var(--entry);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
 }
 
 /* 主题对 entry-header 有 line-clamp 截断，hero 区需要放开以容纳头像 */
@@ -164,99 +234,96 @@ body::before {
     -webkit-line-clamp: unset;
 }
 
-/* 头像：圆形 + 暖橙细环 + 悬停微放大旋转 */
+/* 头像：圆形 + 发丝描边环 + 柔和阴影。
+   悬停不做位移与旋转，只让描边与阴影微变 —— 含蓄的高级反馈。 */
 .entry-avatar {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
 .entry-avatar img {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--accent);
-    box-shadow: 0 0 0 5px var(--accent-tint), 0 4px 14px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--hairline-strong);
+    box-shadow: var(--shadow-avatar);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .entry-avatar img:hover {
-    transform: scale(1.05) rotate(2deg);
-    box-shadow: 0 0 0 8px var(--accent-tint), 0 6px 20px rgba(0, 0, 0, 0.20);
+    border-color: var(--accent-line);
+    box-shadow: var(--shadow-avatar-hover);
 }
 
-/* hero 标题：墨 → 暖橙 subtle 渐变文字（不支持时回退纯色） */
+/* hero 标题：纯色 + 收紧字距，不用渐变文字填充 */
 .home-info .entry-header h1 {
     color: var(--primary);
-}
-
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-    .home-info .entry-header h1 {
-        background-image: linear-gradient(115deg, var(--primary) 30%, var(--accent-2));
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: var(--primary);
-    }
+    letter-spacing: -0.02em;
 }
 
 /* 签名：行高与间距 */
 .home-info .entry-content {
-    max-width: 36em;
-    margin: 14px auto 0;
+    max-width: 34em;
+    margin: 12px auto 0;
     color: var(--secondary);
-    line-height: 1.9;
-    letter-spacing: 0.01em;
+    line-height: 1.8;
 }
 
+/* 签名里的加重词用一次青碧点睛（全站唯一一处强调色用于正文文字） */
 .home-info .entry-content strong {
     color: var(--accent);
+    font-weight: 600;
 }
 
-/* 社交图标入口：居中 + 悬停暖橙上浮 */
+/* 社交图标入口：居中 + 悬停青碧轻微上浮 */
 .home-info .social-icons {
-    margin-top: 10px;
+    margin-top: 18px;
 }
 
 .home-info .social-icons a {
     color: var(--secondary);
-    transition: color 0.2s ease, transform 0.2s ease;
+    opacity: 0.85;
+    transition: color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
 }
 
 .home-info .social-icons a:hover {
     color: var(--accent);
+    opacity: 1;
     transform: translateY(-2px);
 }
 
 /* --------------------------------------------------------------------------
    5. 文章列表卡片化（.post-entry / 列表页首个 .first-entry）
+   用「1px 发丝描边 + 多层柔和阴影」替代原先 3px 粗彩色左边框
    -------------------------------------------------------------------------- */
 .post-entry {
-    border-left: 3px solid transparent;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
     transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .post-entry:hover,
 .post-entry:focus-within {
-    transform: translateY(-4px);
-    border-color: var(--border);
-    border-left-color: var(--accent);
-    box-shadow: var(--shadow-card);
+    transform: translateY(-2px);
+    border-color: var(--accent-line);
+    box-shadow: var(--shadow-card-hover);
 }
 
-/* 列表项标题：悬停时暖橙下划线从左向右生长 */
+/* 列表项标题：悬停时 1px 青碧发丝下划线从左向右生长 */
 .post-entry .entry-header h2 {
     width: fit-content;
     padding-bottom: 2px;
-    background-image: linear-gradient(var(--accent-2), var(--accent-2));
+    background-image: linear-gradient(var(--accent), var(--accent));
     background-repeat: no-repeat;
-    background-size: 0% 2px;
+    background-size: 0% 1px;
     background-position: 0 100%;
     transition: background-size 0.25s ease;
 }
 
 .post-entry:hover .entry-header h2,
 .post-entry:focus-within .entry-header h2 {
-    background-size: 100% 2px;
+    background-size: 100% 1px;
 }
 
 /* 列表页首个大卡片（非首页 hero）同样卡片化 */
@@ -264,26 +331,25 @@ body::before {
     padding: var(--gap);
     margin-bottom: var(--gap);
     background: var(--entry);
-    border: 1px solid var(--border);
-    border-left: 3px solid transparent;
+    border: 1px solid var(--hairline);
     border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
     transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .first-entry:not(.home-info):hover {
-    transform: translateY(-3px);
-    border-color: var(--border);
-    border-left-color: var(--accent);
-    box-shadow: var(--shadow-card);
+    transform: translateY(-2px);
+    border-color: var(--accent-line);
+    box-shadow: var(--shadow-card-hover);
 }
 
 /* --------------------------------------------------------------------------
-   6. 代码块：圆角 + 墨黑代码底 + 复制按钮悬停暖橙
+   6. 代码块与复制按钮
    -------------------------------------------------------------------------- */
 .md-content .highlight:not(table),
 .post-content .highlight:not(table) {
     border-radius: var(--radius);
-    border: 1px solid var(--border);
+    border: 1px solid var(--hairline);
 }
 
 .md-content .highlight pre,
@@ -291,50 +357,51 @@ body::before {
     border-radius: var(--radius);
 }
 
+/* 复制按钮：悬停走「描边 + 极淡底 + 青碧文字」，不再铺满高饱和实色 */
 .copy-code {
-    border-radius: 6px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .copy-code:hover {
-    background: var(--accent);
-    color: #ffffff;
+    color: var(--accent);
+    background: var(--accent-tint);
+    border-color: var(--accent-line);
 }
 
-:root[data-theme="dark"] .copy-code:hover,
-.dark .copy-code:hover {
-    color: #17181a;
-}
-
-/* 行内代码微调 */
+/* 行内代码：底色与页面底色拉开一档，并用稍强的发丝描边勾出边界
+   （仅靠 8% 的 --hairline 在浅色下几乎看不见，故这里用 --hairline-strong） */
 .md-content code,
 .post-content code {
-    border-radius: 4px;
+    border-radius: 5px;
+    border: 1px solid var(--hairline-strong);
 }
 
 /* --------------------------------------------------------------------------
    7. 排版细节
    -------------------------------------------------------------------------- */
-/* 标题底部细分隔线 */
+/* 标题底部发丝分隔线 */
 .post-content h1,
 .post-content h2,
 .md-content h1,
 .md-content h2 {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 0.35em;
 }
 
-/* blockquote：暖橙竖线 + 轻微橙底 */
+/* blockquote：1px 青碧发丝竖线 + 极淡青底，替代原先 3px 粗线 + 厚色块 */
 .post-content blockquote,
 .md-content blockquote {
-    border-inline-start: 3px solid var(--accent);
+    border-inline-start: 1px solid var(--accent);
     background: var(--accent-tint);
-    border-radius: 0 8px 8px 0;
-    padding: 0.6rem 1rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 0.5rem 1.1rem;
     color: var(--secondary);
+    font-size: 0.96em;
 }
 
-/* 顶部导航 / 面包屑 / 回到顶部：暖橙悬停 */
+/* 顶部导航 / 面包屑 / 回到顶部：青碧悬停 */
 .nav a:hover,
 .logo a:hover,
 .breadcrumbs a:hover,
@@ -351,15 +418,24 @@ body::before {
     transform: translateY(-2px);
 }
 
-/* 文章标签悬停暖橙描边 */
+/* 文章标签 / 翻页：悬停青碧文字 + 发丝描边变色 */
 .post-tags a:hover,
 .paginav a:hover {
     color: var(--accent);
-    border-color: var(--accent);
+    border-color: var(--accent-line);
+}
+
+/* 页眉页脚统一发丝分隔线 */
+.nav {
+    border-bottom: 1px solid var(--hairline);
+}
+
+.footer {
+    border-top: 1px solid var(--hairline);
 }
 
 /* --------------------------------------------------------------------------
-   无障碍：尊重 prefers-reduced-motion
+   8. 无障碍：尊重 prefers-reduced-motion
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
 
@@ -367,19 +443,28 @@ body::before {
         scroll-behavior: auto;
     }
 
+    /* 不支持/不偏好动效时，进度条彻底不渲染，不留任何残留 */
     body::before {
         display: none;
     }
 
-    .entry-avatar img,
     .post-entry,
     .first-entry:not(.home-info),
+    .entry-avatar img,
     .home-info .social-icons a,
-    .top-link {
+    .top-link,
+    .post-content a,
+    .entry-content a,
+    .md-content a,
+    .copy-code {
         transition: none;
     }
 
-    .entry-avatar img:hover {
+    .post-entry:hover,
+    .post-entry:focus-within,
+    .first-entry:not(.home-info):hover,
+    .home-info .social-icons a:hover,
+    .top-link:hover {
         transform: none;
     }
 }

@@ -1,32 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="YoRsk avatar">
-  <!-- 墨黑底（非纯黑，带一点冷灰） -->
-  <rect width="240" height="240" rx="52" fill="#17181a" />
+  <defs>
+    <!-- 深色底：带青调的近黑，斜向微渐变避免死板 -->
+    <linearGradient id="yorsk-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16241f" />
+      <stop offset="1" stop-color="#0d1211" />
+    </linearGradient>
 
-  <!-- 角落十字点缀，呼应「笔记」属性 -->
-  <g fill="none" stroke="#33353a" stroke-width="2" stroke-linecap="round">
-    <path d="M34 38 h20 M44 28 v20" />
-    <path d="M186 202 h20 M196 192 v20" />
+    <!-- 字母 Y：单色青碧微渐变，克制不张扬 -->
+    <linearGradient id="yorsk-mark" x1="0" y1="0" x2="0.55" y2="1">
+      <stop offset="0" stop-color="#7ff0dd" />
+      <stop offset="1" stop-color="#2dd4bf" />
+    </linearGradient>
+
+    <!-- 中心极淡光晕，仅用于让标识从底色中浮起 -->
+    <radialGradient id="yorsk-glow" cx="0.5" cy="0.46" r="0.52">
+      <stop offset="0" stop-color="#2dd4bf" stop-opacity="0.15" />
+      <stop offset="1" stop-color="#2dd4bf" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- 底 -->
+  <rect width="240" height="240" fill="url(#yorsk-bg)" />
+
+  <!-- 中心光晕 -->
+  <circle cx="120" cy="120" r="112" fill="url(#yorsk-glow)" />
+
+  <!-- 发丝级内环 -->
+  <circle cx="120" cy="120" r="103" fill="none" stroke="#5eead4" stroke-opacity="0.16" stroke-width="1.5" />
+
+  <!-- 字母 Y：几何笔画，单色青碧 -->
+  <g fill="none" stroke="url(#yorsk-mark)" stroke-width="17" stroke-linecap="round">
+    <path d="M80 73 L120 121" />
+    <path d="M160 73 L120 121" />
+    <path d="M120 121 L120 167" />
   </g>
-
-  <!-- 暖橙呼吸环（虚线圆环，克制的动感） -->
-  <circle cx="120" cy="120" r="84" fill="none" stroke="#f08c00" stroke-opacity="0.20" stroke-width="2" stroke-dasharray="5 11" stroke-linecap="round" />
-
-  <!-- 字母 Y：几何笔画，双橙层次 -->
-  <g fill="none" stroke-linecap="round">
-    <!-- 左斜笔（深橙） -->
-    <path d="M82 76 L120 128" stroke="#e8590c" stroke-width="22" />
-    <!-- 右斜笔（亮橙） -->
-    <path d="M158 76 L120 128" stroke="#f08c00" stroke-width="22" />
-    <!-- 垂直主干（墨上亮橙） -->
-    <path d="M120 128 L120 172" stroke="#f08c00" stroke-width="22" />
-  </g>
-
-  <!-- 纸飞机：右上角暖橙点缀，象征「发送 / 记录」 -->
-  <g>
-    <path d="M166 44 L204 33 L192 63 Z" fill="#fab005" />
-    <path d="M192 63 L188 46 L166 44 Z" fill="#e8590c" />
-  </g>
-
-  <!-- 底部呼吸点 -->
-  <circle cx="120" cy="196" r="4" fill="#e8590c" />
 </svg>

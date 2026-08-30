@@ -10,8 +10,8 @@ mainSections = ["posts"]
   ShowReadingTime = true
   ShowShareButtons = false
   ShowPostNavLinks = true
-  # --- 墨黑 × 暖橙 个性化增强 ---
-  description = "YoRsk 的个人博客：以墨为底，以橙为光 —— 记录代码、折腾与思考。"
+  # --- 青碧 × 冷灰 个性化增强 ---
+  description = "YoRsk 的个人博客：记录代码、折腾与思考。"
   author = "YoRsk"
   keywords = ["YoRsk", "The Simple", "博客", "技术笔记", "Hugo", "PaperMod"]
   ShowWordCount = true
@@ -23,7 +23,7 @@ mainSections = ["posts"]
 # --- 首页个性化横幅（hero）：头像 + 签名 + 社交入口 ---
 [params.homeInfoParams]
   Title = "The Simple · YoRsk"
-  Content = "以墨为底，以橙为光。在这里记录代码、折腾与思考 —— **简单，但不将就。**"
+  Content = "在这里记录代码、折腾与思考 —— **简单，但不将就。**"
   Image = "avatar.svg"
 
 [[params.socialIcons]]
