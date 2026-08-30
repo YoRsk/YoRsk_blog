@@ -1,0 +1,385 @@
+/* ==========================================================================
+   The Simple · 墨黑 × 暖橙 主题定制
+   --------------------------------------------------------------------------
+   通过 PaperMod 的 assets/css/extended/ 机制加载（排在主题样式之后），
+   不改动 themes/ 内任何文件。所有动效时长 0.2~0.3s，克制、精致。
+   模块目录：
+     1. 配色变量重定义（纸感浅底 / 墨黑深底 + 暖橙强调）
+     2. 基础细节（选中、滚动条、平滑滚动、链接）
+     3. 顶部阅读进度条（scroll() 渐进增强）
+     4. 首页 hero 区（头像 / 渐变标题 / 签名 / 社交图标）
+     5. 文章列表卡片化
+     6. 代码块与复制按钮
+     7. 排版细节（标题分隔线、blockquote、标签、导航）
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 配色变量重定义
+   浅色：纸感浅底 + 墨色文字 + 暖橙强调
+   深色：墨黑底（非纯黑）+ 亮暖橙强调，正文亮度不低于 #d4d4d4
+   注：当前 PaperMod 版本未定义 --link-background-color / --entry-hover-border，
+   因此通过 --accent 系列变量 + 下文具体选择器实现同等效果。
+   -------------------------------------------------------------------------- */
+:root {
+    /* 暖橙强调色（浅色模式下用更深的橙以保证对比度） */
+    --accent: #e8590c;
+    --accent-2: #f08c00;
+    --accent-tint: rgba(232, 89, 12, 0.10);
+
+    /* 纸感浅底 */
+    --theme: #faf9f6;
+    --entry: #ffffff;
+    --primary: #211f1c;
+    --secondary: #605c55;
+    --tertiary: #ddd8cf;
+    --content: #28251f;
+    --code-bg: #f3f1ec;
+    --code-block-bg: #191a1c;
+    --border: #e7e3da;
+    --radius: 10px;
+    --shadow-card: 0 6px 18px rgba(28, 25, 20, 0.08);
+}
+
+:root[data-theme="dark"],
+.dark {
+    /* 深色模式下用更亮的橙，在墨黑底上保持醒目 */
+    --accent: #f08c00;
+    --accent-2: #ffa94d;
+    --accent-tint: rgba(240, 140, 0, 0.12);
+
+    /* 墨黑底（#16~#1a 区间，非纯黑） */
+    --theme: #16171a;
+    --entry: #1e1f23;
+    --primary: #e6e4df;
+    --secondary: #a9a59e;
+    --tertiary: #34363b;
+    --content: #d8d6d1;
+    --code-bg: #222327;
+    --code-block-bg: #131416;
+    --border: #2b2d32;
+    --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+/* --------------------------------------------------------------------------
+   2. 基础细节
+   -------------------------------------------------------------------------- */
+html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--tertiary) transparent;
+}
+
+/* 暖橙选中 */
+::selection {
+    background: var(--accent);
+    color: #ffffff;
+}
+
+:root[data-theme="dark"] ::selection,
+.dark ::selection {
+    color: #17181a;
+}
+
+/* 滚动条美化：细、圆角、暖橙 thumb */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--tertiary);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* 正文链接：暖橙 + 底部细线过渡动效 */
+.post-content a,
+.entry-content a {
+    color: var(--accent);
+    text-decoration: none;
+    text-underline-offset: 0.2rem;
+    border-bottom: 1px solid var(--accent-tint);
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.post-content a:hover,
+.entry-content a:hover {
+    color: var(--accent-2);
+    border-bottom-color: var(--accent-2);
+}
+
+/* --------------------------------------------------------------------------
+   3. 顶部阅读进度条（2~3px 暖橙，scroll() 驱动；不支持的浏览器自动隐藏）
+   -------------------------------------------------------------------------- */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    z-index: 100;
+    pointer-events: none;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+}
+
+@supports (animation-timeline: scroll()) {
+    body::before {
+        animation: ts-progress linear both;
+        animation-timeline: scroll(root block);
+    }
+
+    @keyframes ts-progress {
+        from {
+            transform: scaleX(0);
+        }
+
+        to {
+            transform: scaleX(1);
+        }
+    }
+}
+
+/* --------------------------------------------------------------------------
+   4. 首页 hero 区（homeInfoParams 渲染区：.first-entry.home-info）
+   -------------------------------------------------------------------------- */
+.first-entry.home-info {
+    min-height: 360px;
+    text-align: center;
+}
+
+/* 主题对 entry-header 有 line-clamp 截断，hero 区需要放开以容纳头像 */
+.home-info .entry-header {
+    display: block;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+}
+
+/* 头像：圆形 + 暖橙细环 + 悬停微放大旋转 */
+.entry-avatar {
+    margin-bottom: 18px;
+}
+
+.entry-avatar img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 0 5px var(--accent-tint), 0 4px 14px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.entry-avatar img:hover {
+    transform: scale(1.05) rotate(2deg);
+    box-shadow: 0 0 0 8px var(--accent-tint), 0 6px 20px rgba(0, 0, 0, 0.20);
+}
+
+/* hero 标题：墨 → 暖橙 subtle 渐变文字（不支持时回退纯色） */
+.home-info .entry-header h1 {
+    color: var(--primary);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .home-info .entry-header h1 {
+        background-image: linear-gradient(115deg, var(--primary) 30%, var(--accent-2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: var(--primary);
+    }
+}
+
+/* 签名：行高与间距 */
+.home-info .entry-content {
+    max-width: 36em;
+    margin: 14px auto 0;
+    color: var(--secondary);
+    line-height: 1.9;
+    letter-spacing: 0.01em;
+}
+
+.home-info .entry-content strong {
+    color: var(--accent);
+}
+
+/* 社交图标入口：居中 + 悬停暖橙上浮 */
+.home-info .social-icons {
+    margin-top: 10px;
+}
+
+.home-info .social-icons a {
+    color: var(--secondary);
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.home-info .social-icons a:hover {
+    color: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   5. 文章列表卡片化（.post-entry / 列表页首个 .first-entry）
+   -------------------------------------------------------------------------- */
+.post-entry {
+    border-left: 3px solid transparent;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.post-entry:hover,
+.post-entry:focus-within {
+    transform: translateY(-4px);
+    border-color: var(--border);
+    border-left-color: var(--accent);
+    box-shadow: var(--shadow-card);
+}
+
+/* 列表项标题：悬停时暖橙下划线从左向右生长 */
+.post-entry .entry-header h2 {
+    width: fit-content;
+    padding-bottom: 2px;
+    background-image: linear-gradient(var(--accent-2), var(--accent-2));
+    background-repeat: no-repeat;
+    background-size: 0% 2px;
+    background-position: 0 100%;
+    transition: background-size 0.25s ease;
+}
+
+.post-entry:hover .entry-header h2,
+.post-entry:focus-within .entry-header h2 {
+    background-size: 100% 2px;
+}
+
+/* 列表页首个大卡片（非首页 hero）同样卡片化 */
+.first-entry:not(.home-info) {
+    padding: var(--gap);
+    margin-bottom: var(--gap);
+    background: var(--entry);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    border-radius: var(--radius);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.first-entry:not(.home-info):hover {
+    transform: translateY(-3px);
+    border-color: var(--border);
+    border-left-color: var(--accent);
+    box-shadow: var(--shadow-card);
+}
+
+/* --------------------------------------------------------------------------
+   6. 代码块：圆角 + 墨黑代码底 + 复制按钮悬停暖橙
+   -------------------------------------------------------------------------- */
+.md-content .highlight:not(table),
+.post-content .highlight:not(table) {
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.md-content .highlight pre,
+.post-content .highlight pre {
+    border-radius: var(--radius);
+}
+
+.copy-code {
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.copy-code:hover {
+    background: var(--accent);
+    color: #ffffff;
+}
+
+:root[data-theme="dark"] .copy-code:hover,
+.dark .copy-code:hover {
+    color: #17181a;
+}
+
+/* 行内代码微调 */
+.md-content code,
+.post-content code {
+    border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   7. 排版细节
+   -------------------------------------------------------------------------- */
+/* 标题底部细分隔线 */
+.post-content h1,
+.post-content h2,
+.md-content h1,
+.md-content h2 {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.3em;
+}
+
+/* blockquote：暖橙竖线 + 轻微橙底 */
+.post-content blockquote,
+.md-content blockquote {
+    border-inline-start: 3px solid var(--accent);
+    background: var(--accent-tint);
+    border-radius: 0 8px 8px 0;
+    padding: 0.6rem 1rem;
+    color: var(--secondary);
+}
+
+/* 顶部导航 / 面包屑 / 回到顶部：暖橙悬停 */
+.nav a:hover,
+.logo a:hover,
+.breadcrumbs a:hover,
+#theme-toggle:hover,
+.top-link:hover {
+    color: var(--accent);
+}
+
+.top-link {
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.top-link:hover {
+    transform: translateY(-2px);
+}
+
+/* 文章标签悬停暖橙描边 */
+.post-tags a:hover,
+.paginav a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   无障碍：尊重 prefers-reduced-motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    body::before {
+        display: none;
+    }
+
+    .entry-avatar img,
+    .post-entry,
+    .first-entry:not(.home-info),
+    .home-info .social-icons a,
+    .top-link {
+        transition: none;
+    }
+
+    .entry-avatar img:hover {
+        transform: none;
+    }
+}

@@ -1,0 +1,29 @@
+{{- /* 站点级覆盖 PaperMod 的 home_info 局部模板（不改动 themes/ 内文件）。
+       相比原版仅增加：homeInfoParams.Image 头像渲染（assets/ 内资源优先，其次绝对 URL）。 */ -}}
+{{- with site.Params.homeInfoParams }}
+{{- $title := .Title | default site.Title }}
+<article class="first-entry home-info">
+    <header class="entry-header">
+        {{- with .Image }}
+        <div class="entry-avatar">
+            {{- $img := resources.Get . }}
+            {{- if $img }}
+            <img draggable="false" src="{{ $img.Permalink }}" alt="{{ $title }}" title="{{ $title }}"
+                height="120" width="120" />
+            {{- else }}
+            <img draggable="false" src="{{ . | absURL }}" alt="{{ $title }}" title="{{ $title }}"
+                height="120" width="120" />
+            {{- end }}
+        </div>
+        {{- end }}
+        <h1>{{ $title | markdownify }}</h1>
+    </header>
+    <div class="entry-content md-content">
+        {{ $opts := dict "display" "block" }}
+        {{ .Content | $.Page.RenderString $opts }}
+    </div>
+    <footer class="entry-footer">
+        {{ partial "social_icons.html" (dict "align" site.Params.homeInfoParams.AlignSocialIconsTo) }}
+    </footer>
+</article>
+{{- end -}}

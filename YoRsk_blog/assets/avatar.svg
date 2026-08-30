@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="YoRsk avatar">
+  <!-- 墨黑底（非纯黑，带一点冷灰） -->
+  <rect width="240" height="240" rx="52" fill="#17181a" />
+
+  <!-- 角落十字点缀，呼应「笔记」属性 -->
+  <g fill="none" stroke="#33353a" stroke-width="2" stroke-linecap="round">
+    <path d="M34 38 h20 M44 28 v20" />
+    <path d="M186 202 h20 M196 192 v20" />
+  </g>
+
+  <!-- 暖橙呼吸环（虚线圆环，克制的动感） -->
+  <circle cx="120" cy="120" r="84" fill="none" stroke="#f08c00" stroke-opacity="0.20" stroke-width="2" stroke-dasharray="5 11" stroke-linecap="round" />
+
+  <!-- 字母 Y：几何笔画，双橙层次 -->
+  <g fill="none" stroke-linecap="round">
+    <!-- 左斜笔（深橙） -->
+    <path d="M82 76 L120 128" stroke="#e8590c" stroke-width="22" />
+    <!-- 右斜笔（亮橙） -->
+    <path d="M158 76 L120 128" stroke="#f08c00" stroke-width="22" />
+    <!-- 垂直主干（墨上亮橙） -->
+    <path d="M120 128 L120 172" stroke="#f08c00" stroke-width="22" />
+  </g>
+
+  <!-- 纸飞机：右上角暖橙点缀，象征「发送 / 记录」 -->
+  <g>
+    <path d="M166 44 L204 33 L192 63 Z" fill="#fab005" />
+    <path d="M192 63 L188 46 L166 44 Z" fill="#e8590c" />
+  </g>
+
+  <!-- 底部呼吸点 -->
+  <circle cx="120" cy="196" r="4" fill="#e8590c" />
+</svg>
