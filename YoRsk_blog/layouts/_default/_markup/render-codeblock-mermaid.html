@@ -1,0 +1,20 @@
+{{- /*
+  render-codeblock-mermaid.html
+  拦截 ```mermaid 代码块：输出 <pre class="mermaid">，由 mermaid.js
+  在浏览器端渲染成流程图/时序图/甘特图等。
+
+  加载策略：同一页面出现多个 mermaid 块时，只在第一个块后面注入一次
+  <script type="module">（通过页面 Store 标记判断）。
+  用渲染钩子而非页脚 partial 注入，是因为新版 Hugo 布局系统中
+  主题 _partials 的覆盖行为不可靠（实测 extend_footer 覆盖不生效）。
+*/ -}}
+<pre class="mermaid">
+{{- .Inner | htmlEscape | safeHTML -}}
+</pre>
+{{- if not (.Page.Store.Get "hasMermaid") -}}
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+</script>
+{{- end -}}
+{{- .Page.Store.Set "hasMermaid" true -}}
