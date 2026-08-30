@@ -84,6 +84,8 @@ jobs:
           external_repository: YoRsk/YoRsk.github.io
           publish_branch: main
           publish_dir: build_output
+          # 该 action 默认 exclude_assets: '.github'，会丢掉 Pages 仓库的发布 workflow，必须显式清空
+          exclude_assets: ''
           commit_message: 'Deploy from YoRsk_blog@${{ github.sha }}'
 
       - name: Warn if token missing
