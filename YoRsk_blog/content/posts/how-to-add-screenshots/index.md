@@ -27,7 +27,6 @@ content/posts/how-to-add-screenshots/
 
 ![](20260830-174108.png)
 
-
 ![1](ScreenShot_2026-08-29_142636_084.png)
 
 ## 
